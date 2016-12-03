@@ -21,7 +21,7 @@ public class MyData {
         this.url=url;
         this.description=description;
         this.price=Integer.parseInt(price);
-        Log.i("database","Price : "+this.price);
+        //Log.i("database","Price : "+this.price);
     }
 
 }

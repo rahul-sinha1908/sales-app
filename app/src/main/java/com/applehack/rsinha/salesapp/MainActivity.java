@@ -164,11 +164,23 @@ public class MainActivity extends AppCompatActivity
             in.putExtra("admin",admin);
             Log.i("ShowReport","Hello "+id);
             startActivity(in);
+        } else if(id==R.id.remove_product){
+            removeProduct();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void removeProduct() {
+        for(int i=0;i<sold.size();i++) {
+            if (sold.get(i)) {
+                MyData data=new MyData(datas.get(i).name,"0","","");
+                MyDataBase.delete(this,data);
+            }
+        }
+        reflectChange();
     }
 
     private static final int FILE_SELECT_CODE = 1908;
