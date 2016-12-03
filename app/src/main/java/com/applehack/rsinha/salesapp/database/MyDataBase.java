@@ -20,6 +20,20 @@ public class MyDataBase {
             sdb=cont.openOrCreateDatabase("SalesApp",Context.MODE_PRIVATE,null);
         return sdb;
     }
+    public static ArrayList<String> getAllTables(Context context){
+        initiate(context);
+        ArrayList<String> arrayList=new ArrayList<String>();
+        String sql="SELECT name FROM sqlite_master WHERE type='table'";
+        Cursor cursor=sdb.rawQuery(sql, null);
+        if(cursor!=null&& cursor.moveToFirst()){
+            do{
+                String name=cursor.getString(0);
+                if(!name.equals("DATA") && !name.equals("android_metadata"))
+                    arrayList.add(name);
+            }while(cursor.moveToNext());
+        }
+        return arrayList;
+    }
 
     public static void createTable(Context cont){
         initiate(cont);
@@ -68,5 +82,45 @@ public class MyDataBase {
         }
         return data;
     }
+
+    public static void createTable(Context cont, String tName){
+        initiate(cont);
+        try {
+            String sql = "CREATE TABLE IF NOT EXISTS `"+tName+"`(Name varchar, Quantity integer)";
+            sdb.execSQL(sql);
+        }catch(Exception ex){
+            Log.i(T, ex.getMessage());
+        }
+    }
+
+    public static void insert(Context cont, String tName,SoldObject ob){
+        createTable(cont,tName);
+        try{
+            String sql="INSERT INTO `"+tName+"` VALUES('"+ob.name+"',"+ob.quantity+")";
+            sdb.execSQL(sql);
+        }catch(Exception ex){
+            Log.i(T, ex.getMessage());
+        }
+    }
+    public static ArrayList<SoldObject> getData(Context context, String tName){
+        createTable(context, tName);
+        ArrayList<SoldObject> data = new ArrayList<SoldObject>();
+        try{
+            String sql="SELECT Name, Quantity FROM `"+tName+"` ";
+            Cursor cursor = sdb.rawQuery(sql,null);
+
+            if(cursor!=null && cursor.moveToFirst()){
+                do{
+                    //Log.i(T,cursor.getString(0)+" : "+cursor.getString(3)+" : "+cursor.getString(2)+" : "+cursor.getString(1));
+                    SoldObject d=new SoldObject(cursor.getString(0),cursor.getString(1));
+                    data.add(d);
+                }while(cursor.moveToNext());
+            }
+        }catch(Exception ex){
+            Log.i(T, ex.getMessage());
+        }
+        return data;
+    }
+
 
 }

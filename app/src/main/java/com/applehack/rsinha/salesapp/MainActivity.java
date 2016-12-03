@@ -1,6 +1,7 @@
 package com.applehack.rsinha.salesapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -22,6 +23,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 
 import com.applehack.rsinha.salesapp.database.MyData;
 import com.applehack.rsinha.salesapp.database.MyDataBase;
+import com.applehack.rsinha.salesapp.database.SoldObject;
 
 import org.w3c.dom.Text;
 
@@ -40,10 +44,12 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public String TAG="MainActivity";
+    public String TAG = "MainActivity";
     private LayoutInflater layoutInflater;
     private LinearLayout holder;
     private ArrayList<MyData> datas;
+    private ArrayList<Boolean> sold;
+    private String id, name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +58,33 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            id = bundle.getString("id", "XXX");
+            name = bundle.getString("name", "Rahul Sinha");
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AlertDialog.Builder adb=new AlertDialog.Builder(MainActivity.this);
+                String msg="You Sold - \n";
+                for(int i=0;i<sold.size();i++){
+                    if(sold.get(i)){
+                        msg = msg+datas.get(i).name+"\n";
+                    }
+                }
+                adb.setTitle("Summary of What you sold")
+                        .setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                storeInDatabase();
+                            }
+                        })
+                        .setNegativeButton("Later",null)
+                        .setMessage(msg)
+                        .show();
             }
         });
 
@@ -70,14 +97,23 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        layoutInflater=(LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
 
         bindViews();
         refreshScreen();
     }
-
-    private void bindViews(){
-        holder=(LinearLayout)findViewById(R.id.voucher_holder);
+    private void storeInDatabase(){
+        for(int i=0;i<sold.size();i++) {
+            if (sold.get(i)) {
+                SoldObject soldO=new SoldObject(datas.get(i).name,1);
+                MyDataBase.insert(this,id,soldO);
+            }
+        }
+    }
+    private void bindViews() {
+        holder = (LinearLayout) findViewById(R.id.voucher_holder);
+        TextView tv = (TextView) findViewById(R.id.user_name);
+        tv.setText("Hi, " + name);
     }
 
     @Override
@@ -120,6 +156,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.add_product) {
             showFileChooser();
+        } else if (id == R.id.show_report) {
+            startActivity(new Intent(this, ShowReport.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -144,18 +182,19 @@ public class MainActivity extends AppCompatActivity
                     Toast.LENGTH_SHORT).show();
         }
     }
-    public void showAddDetailsDialog(final String path){
-        AlertDialog.Builder adb =new AlertDialog.Builder(this);
-        View v=layoutInflater.inflate(R.layout.add_details,null);
+
+    public void showAddDetailsDialog(final String path) {
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        View v = layoutInflater.inflate(R.layout.add_details, null);
         adb.setView(v);
         adb.setCancelable(false);
-        final AlertDialog ad= adb.create();
+        final AlertDialog ad = adb.create();
         ad.show();
 
-        final EditText pName=(EditText) v.findViewById(R.id.txt_product_name);
-        final EditText pPrice=(EditText) v.findViewById(R.id.txt_price);
-        final EditText pDetails=(EditText) v.findViewById(R.id.txt_description);
-        Button button=(Button)v.findViewById(R.id.btn_add_product);
+        final EditText pName = (EditText) v.findViewById(R.id.txt_product_name);
+        final EditText pPrice = (EditText) v.findViewById(R.id.txt_price);
+        final EditText pDetails = (EditText) v.findViewById(R.id.txt_description);
+        Button button = (Button) v.findViewById(R.id.btn_add_product);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,15 +202,15 @@ public class MainActivity extends AppCompatActivity
                 String name = pName.getText().toString();
                 String price = pPrice.getText().toString();
                 String details = pDetails.getText().toString();
-                addToDatabase(name, price, details,path);
+                addToDatabase(name, price, details, path);
                 ad.dismiss();
             }
         });
     }
 
-    public void addToDatabase(String name, String price, String details, String path){
-        MyData d=new MyData(name, price, details,path);
-        MyDataBase.insert(this,d);
+    public void addToDatabase(String name, String price, String details, String path) {
+        MyData d = new MyData(name, price, details, path);
+        MyDataBase.insert(this, d);
 
         reflectChange();
     }
@@ -193,12 +232,12 @@ public class MainActivity extends AppCompatActivity
                     try {
                         path = getPath(this, uri);
                     } catch (URISyntaxException e) {
-                        Log.i(TAG,e.getMessage());
+                        Log.i(TAG, e.getMessage());
                     }
                     Log.d(TAG, "File Path: " + path);
-                    if(path==null){
-                        Toast.makeText(this,"Sorry, Could load the Image",Toast.LENGTH_LONG).show();
-                    }else{
+                    if (path == null) {
+                        Toast.makeText(this, "Sorry, Could load the Image", Toast.LENGTH_LONG).show();
+                    } else {
                         showAddDetailsDialog(path);
                     }
                     // Get the file instance
@@ -212,7 +251,7 @@ public class MainActivity extends AppCompatActivity
 
     public static String getPath(Context context, Uri uri) throws URISyntaxException {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
+            String[] projection = {"_data"};
             Cursor cursor = null;
 
             try {
@@ -224,55 +263,71 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 // Eat it
             }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
 
         return null;
     }
-    public void refreshScreen(){
-        holder.removeAllViews();
-        Log.i(TAG,"1");
-        datas=MyDataBase.getData(this);
-        Log.i(TAG,"2");
 
-        if(datas.size()==0){
-            TextView tv=new TextView(this);
+    public void refreshScreen() {
+        holder.removeAllViews();
+        Log.i(TAG, "1");
+        datas = MyDataBase.getData(this);
+        sold = new ArrayList<Boolean>();
+        for (int i = 0; i < datas.size(); i++) {
+            sold.add(false);
+        }
+        Log.i(TAG, "2");
+
+        if (datas.size() == 0) {
+            TextView tv = new TextView(this);
             tv.setText("Nothing TO show");
             holder.addView(tv);
         }
-        Log.i(TAG,"3");
-        for(int i=0;i<datas.size();i++){
+        Log.i(TAG, "3");
+        for (int i = 0; i < datas.size(); i++) {
             try {
                 View v = layoutInflater.inflate(R.layout.inflate_horizontal, null);
                 ImageView img = (ImageView) v.findViewById(R.id.img_show_product);
                 TextView name = (TextView) v.findViewById(R.id.txt_show_product_name);
                 TextView price = (TextView) v.findViewById(R.id.txt_show_price);
                 TextView desc = (TextView) v.findViewById(R.id.txt_show_description);
-                Log.i(TAG,"3.0");
+                CheckBox cb = (CheckBox) v.findViewById(R.id.checkBox);
+                Log.i(TAG, "3.0");
                 name.setText(datas.get(i).name);
-                Log.i(TAG,"3.01");
+                Log.i(TAG, "3.01");
                 desc.setText(datas.get(i).description);
-                Log.i(TAG,"3.02");
+                Log.i(TAG, "3.02");
                 price.setText(String.valueOf(datas.get(i).price));
                 String path = datas.get(i).url;
                 Log.i(TAG, path);
                 File file = new File(path);
                 Log.i(TAG, file.getAbsolutePath());
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                Log.i(TAG,"3.1");
+                Log.i(TAG, "3.1");
                 img.setImageBitmap(bitmap);
-                Log.i(TAG,"3.2");
+                Log.i(TAG, "3.2");
                 //TODO Check Click Listener
 
+                cb.setTag(i);
+                cb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.i(TAG,"Its Here");
+                        CheckBox cb=(CheckBox) view;
+                        int ind=(int)view.getTag();
+                        sold.set(ind,cb.isChecked());
+                    }
+                });
+
                 holder.addView(v);
-            }catch(Exception ex){
-                Log.i(TAG,"3.3 : "+ex.getMessage() );
+            } catch (Exception ex) {
+                Log.i(TAG, "3.3 : " + ex.getMessage());
                 ex.printStackTrace();
             }
-            Log.i(TAG,"4");
+            Log.i(TAG, "4");
         }
-        Log.i(TAG,"5");
+        Log.i(TAG, "5");
     }
 }
