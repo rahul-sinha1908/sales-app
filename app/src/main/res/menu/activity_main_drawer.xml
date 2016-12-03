@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/add_product"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Add Product" />
+        <item
+            android:id="@+id/remove_product"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="Remove Product" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/help"
+                android:icon="@android:drawable/ic_menu_help"
+                android:title="Help" />
+        </menu>
+    </item>
+
+</menu>

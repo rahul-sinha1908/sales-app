@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"></LinearLayout>
+
+    <CheckBox
+        android:layout_height="match_parent"
+        android:id="@+id/checkBox"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:padding="5dp" />
+
+    <ImageView
+        android:layout_height="74dp"
+        app:srcCompat="@drawable/ic_menu_camera"
+        android:layout_weight="1"
+        android:layout_width="74dp"
+        android:id="@+id/@+id/img_product" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5">
+
+        <TextView
+            android:text="Product Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_show_product_name" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:id="@+id/@+id/txt_show_description" />
+    </LinearLayout>
+</LinearLayout>
