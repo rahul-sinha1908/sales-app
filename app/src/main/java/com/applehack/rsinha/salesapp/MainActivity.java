@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<MyData> datas;
     private ArrayList<Boolean> sold;
     private String id, name;
+    private boolean admin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity
         if (bundle != null) {
             id = bundle.getString("id", "XXX");
             name = bundle.getString("name", "Rahul Sinha");
+            admin=bundle.getBoolean("admin");
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -157,7 +159,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.add_product) {
             showFileChooser();
         } else if (id == R.id.show_report) {
-            startActivity(new Intent(this, ShowReport.class));
+            Intent in=new Intent(this, ShowReport.class);
+            in.putExtra("id",this.id);
+            in.putExtra("admin",admin);
+            Log.i("ShowReport","Hello "+id);
+            startActivity(in);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -36,6 +36,12 @@
         android:id="@+id/txt_login_name"
         android:hint="Whats Your Name" />
 
+    <CheckBox
+        android:text="isAdmin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox2" />
+
     <Button
         android:text="Login"
         android:layout_width="match_parent"

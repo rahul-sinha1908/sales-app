@@ -8,11 +8,13 @@
         android:orientation="vertical"
         android:padding="5dp"
         android:layout_marginBottom="10dp"
+        android:id="@+id/details_backgroud"
         android:background="@android:color/holo_blue_light">
         <TextView
             android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="20dp"
             android:id="@+id/details_table_name" />
 
         <LinearLayout
@@ -20,7 +22,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            android:id="@+id/report_details_holder">
+            android:id="@+id/report_details_holder"
+            android:background="@android:color/white">
 
         </LinearLayout>
     </LinearLayout>
