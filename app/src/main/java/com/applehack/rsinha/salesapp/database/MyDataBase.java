@@ -24,7 +24,7 @@ public class MyDataBase {
     public static void createTable(Context cont){
         initiate(cont);
         try {
-            String sql = "CREATE TABLE IF NOT EXISTS `DATA`(Name varchar, URL varchar, Description varchar, Price integer)";
+            String sql = "CREATE TABLE IF NOT EXISTS `DATA`(Name varchar, URL varchar, Description varchar, Price varchar)";
             sdb.execSQL(sql);
         }catch(Exception ex){
             Log.i(T, ex.getMessage());
@@ -58,6 +58,7 @@ public class MyDataBase {
 
             if(cursor!=null && cursor.moveToFirst()){
                 do{
+                    Log.i(T,cursor.getString(0)+" : "+cursor.getString(3)+" : "+cursor.getString(2)+" : "+cursor.getString(1));
                     MyData d=new MyData(cursor.getString(0),cursor.getString(3),cursor.getString(2), cursor.getString(1));
                     data.add(d);
                 }while(cursor.moveToNext());

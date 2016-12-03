@@ -1,5 +1,7 @@
 package com.applehack.rsinha.salesapp.database;
 
+import android.util.Log;
+
 /**
  * Created by rsinha on 12/3/16.
  */
@@ -19,6 +21,7 @@ public class MyData {
         this.url=url;
         this.description=description;
         this.price=Integer.parseInt(price);
+        Log.i("database","Price : "+this.price);
     }
 
 }

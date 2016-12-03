@@ -25,7 +25,7 @@
         app:srcCompat="@drawable/ic_menu_camera"
         android:layout_weight="1"
         android:layout_width="74dp"
-        android:id="@+id/@+id/img_product" />
+        android:id="@+id/img_show_product" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -40,9 +40,15 @@
             android:id="@+id/txt_show_product_name" />
 
         <TextView
+            android:text="Price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_show_price" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
-            android:id="@+id/@+id/txt_show_description" />
+            android:id="@+id/txt_show_description" />
     </LinearLayout>
 </LinearLayout>

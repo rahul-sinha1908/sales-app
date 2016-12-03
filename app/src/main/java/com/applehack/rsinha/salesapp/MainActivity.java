@@ -3,6 +3,8 @@ package com.applehack.rsinha.salesapp;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,12 +23,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.applehack.rsinha.salesapp.database.MyData;
 import com.applehack.rsinha.salesapp.database.MyDataBase;
 
+import org.w3c.dom.Text;
+
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -66,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         layoutInflater=(LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
 
         bindViews();
+        refreshScreen();
     }
 
     private void bindViews(){
@@ -169,7 +177,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void reflectChange() {
-
+        refreshScreen();
     }
 
     @Override
@@ -225,10 +233,46 @@ public class MainActivity extends AppCompatActivity
     }
     public void refreshScreen(){
         holder.removeAllViews();
+        Log.i(TAG,"1");
         datas=MyDataBase.getData(this);
+        Log.i(TAG,"2");
 
-        for(int i=0;i<datas.size();i++){
-            View v
+        if(datas.size()==0){
+            TextView tv=new TextView(this);
+            tv.setText("Nothing TO show");
+            holder.addView(tv);
         }
+        Log.i(TAG,"3");
+        for(int i=0;i<datas.size();i++){
+            try {
+                View v = layoutInflater.inflate(R.layout.inflate_horizontal, null);
+                ImageView img = (ImageView) v.findViewById(R.id.img_show_product);
+                TextView name = (TextView) v.findViewById(R.id.txt_show_product_name);
+                TextView price = (TextView) v.findViewById(R.id.txt_show_price);
+                TextView desc = (TextView) v.findViewById(R.id.txt_show_description);
+                Log.i(TAG,"3.0");
+                name.setText(datas.get(i).name);
+                Log.i(TAG,"3.01");
+                desc.setText(datas.get(i).description);
+                Log.i(TAG,"3.02");
+                price.setText(String.valueOf(datas.get(i).price));
+                String path = datas.get(i).url;
+                Log.i(TAG, path);
+                File file = new File(path);
+                Log.i(TAG, file.getAbsolutePath());
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                Log.i(TAG,"3.1");
+                img.setImageBitmap(bitmap);
+                Log.i(TAG,"3.2");
+                //TODO Check Click Listener
+
+                holder.addView(v);
+            }catch(Exception ex){
+                Log.i(TAG,"3.3 : "+ex.getMessage() );
+                ex.printStackTrace();
+            }
+            Log.i(TAG,"4");
+        }
+        Log.i(TAG,"5");
     }
 }
