@@ -106,7 +106,7 @@ public class MyDataBase {
         createTable(context, tName);
         ArrayList<SoldObject> data = new ArrayList<SoldObject>();
         try{
-            String sql="SELECT Name, Quantity FROM `"+tName+"` ";
+            String sql="SELECT Name, SUM(Quantity) FROM `"+tName+"` GROUP BY Name";
             Cursor cursor = sdb.rawQuery(sql,null);
 
             if(cursor!=null && cursor.moveToFirst()){
