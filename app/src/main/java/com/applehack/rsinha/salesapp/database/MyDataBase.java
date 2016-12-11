@@ -112,7 +112,7 @@ public class MyDataBase {
             if(cursor!=null && cursor.moveToFirst()){
                 do{
                     //Log.i(T,cursor.getString(0)+" : "+cursor.getString(3)+" : "+cursor.getString(2)+" : "+cursor.getString(1));
-                    SoldObject d=new SoldObject(cursor.getString(0),cursor.getString(1));
+                    SoldObject d=new SoldObject(cursor.getString(0),cursor.getString(1), cursor.getString(2));
                     data.add(d);
                 }while(cursor.moveToNext());
             }

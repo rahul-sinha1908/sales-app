@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity
     private void storeInDatabase(){
         for(int i=0;i<sold.size();i++) {
             if (sold.get(i)) {
-                SoldObject soldO=new SoldObject(datas.get(i).name,1);
+                SoldObject soldO=new SoldObject(datas.get(i).name,1, datas.get(i).price);
                 MyDataBase.insert(this,id,soldO);
             }
         }
